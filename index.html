@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cute Calculator 🌸</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          #fde8f0 0%,
+          #fce4ec 40%,
+          #f3e5f5 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Nunito", sans-serif;
+      }
+
+      /* floating hearts background */
+      body::before {
+        content: "🌸 💕 ✨ 🌷 💗 🌸 ✨ 💕";
+        position: fixed;
+        top: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 22px;
+        letter-spacing: 28px;
+        opacity: 0.25;
+        pointer-events: none;
+      }
+
+      .calculator {
+        background: #fff0f5;
+        border-radius: 32px;
+        padding: 28px 24px 24px;
+        width: 320px;
+        box-shadow:
+          0 8px 32px rgba(236, 64, 122, 0.12),
+          0 2px 8px rgba(236, 64, 122, 0.08);
+        border: 2px solid #f8bbd0;
+        position: relative;
+      }
+
+      /* little bow on top */
+      .calculator::before {
+        content: "🎀";
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 36px;
+      }
+
+      .calc-label {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #f06292;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        margin-top: 4px;
+      }
+
+      /* display */
+      .display {
+        background: linear-gradient(160deg, #fff5f8, #fce4ec);
+        border: 1.5px solid #f8bbd0;
+        border-radius: 20px;
+        padding: 14px 18px 12px;
+        margin-bottom: 20px;
+        min-height: 90px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-end;
+        overflow: hidden;
+      }
+
+      .display-expr {
+        font-size: 13px;
+        color: #f48fb1;
+        min-height: 18px;
+        word-break: break-all;
+        margin-bottom: 4px;
+      }
+
+      .display-val {
+        font-size: 38px;
+        font-weight: 800;
+        color: #ad1457;
+        line-height: 1.1;
+        word-break: break-all;
+        transition: font-size 0.1s;
+      }
+
+      /* button grid */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .btn {
+        height: 60px;
+        border: none;
+        border-radius: 16px;
+        font-family: "Nunito", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 0.1s,
+          box-shadow 0.1s,
+          background 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn:active {
+        transform: scale(0.91);
+      }
+
+      /* number buttons */
+      .btn.num {
+        background: #fff0f5;
+        color: #880e4f;
+        box-shadow: 0 3px 0 #f8bbd0;
+        border: 1.5px solid #f8bbd0;
+      }
+      .btn.num:hover {
+        background: #fce4ec;
+      }
+
+      /* operator buttons */
+      .btn.op {
+        background: #f8bbd0;
+        color: #880e4f;
+        box-shadow: 0 3px 0 #f48fb1;
+      }
+      .btn.op:hover {
+        background: #f48fb1;
+        color: #fff;
+      }
+
+      /* clear button */
+      .btn.clear {
+        background: #fce4ec;
+        color: #c62828;
+        box-shadow: 0 3px 0 #ef9a9a;
+        border: 1.5px solid #ef9a9a;
+      }
+      .btn.clear:hover {
+        background: #ef9a9a;
+        color: #fff;
+      }
+
+      /* equals button */
+      .btn.eq {
+        background: linear-gradient(135deg, #f06292, #e91e8c);
+        color: #fff;
+        box-shadow: 0 4px 0 #ad1457;
+        font-size: 22px;
+      }
+      .btn.eq:hover {
+        background: linear-gradient(135deg, #e91e8c, #c2185b);
+      }
+      .btn.eq:active {
+        box-shadow: 0 1px 0 #ad1457;
+        transform: scale(0.91) translateY(3px);
+      }
+
+      /* zero spans two columns */
+      .btn.zero {
+        grid-column: span 2;
+        border-radius: 16px;
+      }
+
+      /* bottom decoration */
+      .hearts {
+        text-align: center;
+        margin-top: 18px;
+        font-size: 16px;
+        letter-spacing: 6px;
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator">
+      <p class="calc-label">✨ Calculator ✨</p>
+
+      <div class="display">
+        <div class="display-expr" id="expr"></div>
+        <div class="display-val" id="val">0</div>
+      </div>
+
+      <div class="grid">
+        <button class="btn clear" onclick="calc('AC')">AC</button>
+        <button class="btn op" onclick="calc('+/-')">+/-</button>
+        <button class="btn op" onclick="calc('%')">%</button>
+        <button class="btn op" onclick="calc('÷')">÷</button>
+
+        <button class="btn num" onclick="calc('7')">7</button>
+        <button class="btn num" onclick="calc('8')">8</button>
+        <button class="btn num" onclick="calc('9')">9</button>
+        <button class="btn op" onclick="calc('×')">×</button>
+
+        <button class="btn num" onclick="calc('4')">4</button>
+        <button class="btn num" onclick="calc('5')">5</button>
+        <button class="btn num" onclick="calc('6')">6</button>
+        <button class="btn op" onclick="calc('−')">−</button>
+
+        <button class="btn num" onclick="calc('1')">1</button>
+        <button class="btn num" onclick="calc('2')">2</button>
+        <button class="btn num" onclick="calc('3')">3</button>
+        <button class="btn op" onclick="calc('+')">+</button>
+
+        <button class="btn num zero" onclick="calc('0')">0</button>
+        <button class="btn num" onclick="calc('.')">.</button>
+        <button class="btn eq" onclick="calc('=')">=</button>
+      </div>
+
+      <div class="hearts">💗 💕 💗</div>
+    </div>
+
+    <script>
+      let current = "0",
+        expr = "",
+        operator = null,
+        prevVal = null,
+        justEvaled = false;
+
+      function updateDisplay() {
+        const valEl = document.getElementById("val");
+        const exprEl = document.getElementById("expr");
+        const txt =
+          current.length > 11 ? parseFloat(current).toExponential(4) : current;
+        valEl.textContent = txt;
+        valEl.style.fontSize =
+          txt.length > 10 ? "22px" : txt.length > 7 ? "28px" : "38px";
+        exprEl.textContent = expr;
+      }
+
+      function evaluate(a, b, op) {
+        if (op === "+") return a + b;
+        if (op === "−") return a - b;
+        if (op === "×") return a * b;
+        if (op === "÷") return b !== 0 ? a / b : NaN;
+      }
+
+      function format(n) {
+        if (isNaN(n)) return "Error";
+        return String(parseFloat(n.toFixed(10)));
+      }
+
+      function calc(key) {
+        const ops = ["÷", "×", "−", "+"];
+
+        if (key === "AC") {
+          current = "0";
+          expr = "";
+          operator = null;
+          prevVal = null;
+          justEvaled = false;
+        } else if (key === "+/-") {
+          if (current !== "0")
+            current = current.startsWith("-")
+              ? current.slice(1)
+              : "-" + current;
+        } else if (key === "%") {
+          current = format(parseFloat(current) / 100);
+        } else if (ops.includes(key)) {
+          if (operator && !justEvaled) {
+            current = format(
+              evaluate(parseFloat(prevVal), parseFloat(current), operator),
+            );
+          }
+          prevVal = current;
+          operator = key;
+          expr = current + " " + key;
+          current = "0";
+          justEvaled = false;
+        } else if (key === "=") {
+          if (operator && prevVal !== null) {
+            expr = prevVal + " " + operator + " " + current + " =";
+            current = format(
+              evaluate(parseFloat(prevVal), parseFloat(current), operator),
+            );
+            operator = null;
+            prevVal = null;
+            justEvaled = true;
+          }
+        } else if (key === ".") {
+          if (justEvaled) {
+            current = "0";
+            justEvaled = false;
+          }
+          if (!current.includes(".")) current += ".";
+        } else {
+          if (current === "0" || justEvaled) {
+            current = key;
+            justEvaled = false;
+          } else if (current.length < 12) current += key;
+        }
+
+        updateDisplay();
+      }
+
+      document.addEventListener("keydown", (e) => {
+        const map = {
+          0: "0",
+          1: "1",
+          2: "2",
+          3: "3",
+          4: "4",
+          5: "5",
+          6: "6",
+          7: "7",
+          8: "8",
+          9: "9",
+          ".": ".",
+          Enter: "=",
+          "=": "=",
+          Backspace: "AC",
+          "/": "÷",
+          "*": "×",
+          "-": "−",
+          "+": "+",
+        };
+        if (map[e.key]) {
+          e.preventDefault();
+          calc(map[e.key]);
+        }
+      });
+    </script>
+  </body>
+</html>
