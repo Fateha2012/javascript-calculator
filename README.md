@@ -20,4 +20,4 @@ A calculator built with HTML, CSS and JavaScript for learning.
 
 ## Run Locally
 
-Open `index.html` in your browser.ss
+Open `index.html` in your browser.
